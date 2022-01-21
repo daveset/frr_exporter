@@ -25,7 +25,7 @@ func init() {
 }
 
 type VrrpVrInfo struct {
-	Vrid      int
+	Vrid      uint32
 	Interface string
 	V6Info    VrrpInstanceInfo `json:"v6"`
 	V4Info    VrrpInstanceInfo `json:"v4"`
@@ -38,11 +38,11 @@ type VrrpInstanceInfo struct {
 }
 
 type VrrpInstanceStats struct {
-	AdverTx         *int
-	AdverRx         *int
-	GarpTx          *int
-	NeighborAdverTx *int
-	Transitions     *int
+	AdverTx         *float64
+	AdverRx         *float64
+	GarpTx          *float64
+	NeighborAdverTx *float64
+	Transitions     *float64
 }
 
 type vrrpCollector struct {
@@ -96,8 +96,8 @@ func processVRRPInfo(ch chan<- prometheus.Metric, jsonVRRPInfo []byte, desc map[
 	return nil
 }
 
-func processInstance(ch chan<- prometheus.Metric, proto string, vrid int, iface string, instance VrrpInstanceInfo, vrrpDesc map[string]*prometheus.Desc) {
-	vrrpLabels := []string{proto, strconv.Itoa(vrid), iface, instance.Subinterface}
+func processInstance(ch chan<- prometheus.Metric, proto string, vrid uint32, iface string, instance VrrpInstanceInfo, vrrpDesc map[string]*prometheus.Desc) {
+	vrrpLabels := []string{proto, strconv.FormatUint(uint64(vrid), 10), iface, instance.Subinterface}
 
 	for _, state := range vrrpStates {
 		stateLabels := append(vrrpLabels, state)
@@ -112,22 +112,22 @@ func processInstance(ch chan<- prometheus.Metric, proto string, vrid int, iface 
 	}
 
 	if instance.Statistics.AdverTx != nil {
-		newCounter(ch, vrrpDesc["adverTx"], float64(*instance.Statistics.AdverTx), vrrpLabels...)
+		newCounter(ch, vrrpDesc["adverTx"], *instance.Statistics.AdverTx, vrrpLabels...)
 	}
 
 	if instance.Statistics.AdverRx != nil {
-		newCounter(ch, vrrpDesc["adverRx"], float64(*instance.Statistics.AdverRx), vrrpLabels...)
+		newCounter(ch, vrrpDesc["adverRx"], *instance.Statistics.AdverRx, vrrpLabels...)
 	}
 
 	if instance.Statistics.GarpTx != nil {
-		newCounter(ch, vrrpDesc["garpTx"], float64(*instance.Statistics.GarpTx), vrrpLabels...)
+		newCounter(ch, vrrpDesc["garpTx"], *instance.Statistics.GarpTx, vrrpLabels...)
 	}
 
 	if instance.Statistics.NeighborAdverTx != nil {
-		newCounter(ch, vrrpDesc["neighborAdverTx"], float64(*instance.Statistics.NeighborAdverTx), vrrpLabels...)
+		newCounter(ch, vrrpDesc["neighborAdverTx"], *instance.Statistics.NeighborAdverTx, vrrpLabels...)
 	}
 
 	if instance.Statistics.Transitions != nil {
-		newCounter(ch, vrrpDesc["transitions"], float64(*instance.Statistics.Transitions), vrrpLabels...)
+		newCounter(ch, vrrpDesc["transitions"], *instance.Statistics.Transitions, vrrpLabels...)
 	}
 }

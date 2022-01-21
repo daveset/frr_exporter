@@ -62,7 +62,7 @@ func processBFDPeers(ch chan<- prometheus.Metric, jsonBFDInterface []byte, bfdDe
 		labels := []string{p.Local, p.Peer}
 
 		// get the uptime of the connection to the peer in seconds
-		newGauge(ch, bfdDesc["bfdPeerUptime"], float64(p.Uptime), labels...)
+		newGauge(ch, bfdDesc["bfdPeerUptime"], p.Uptime, labels...)
 
 		// state of connection to the bfd peer, up or down
 		var bfdState float64
@@ -75,20 +75,20 @@ func processBFDPeers(ch chan<- prometheus.Metric, jsonBFDInterface []byte, bfdDe
 }
 
 type bfdPeer struct {
-	Multihop               bool   `json:"multihop"`
-	Peer                   string `json:"peer"`
-	Local                  string `json:"local"`
-	Vrf                    string `json:"vrf"`
-	ID                     int    `json:"id"`
-	RemoteID               int    `json:"remote-id"`
-	Status                 string `json:"status"`
-	Uptime                 int    `json:"uptime"`
-	Diagnostic             string `json:"diagnostic"`
-	RemoteDiagnostic       string `json:"remote-diagnostic"`
-	ReceiveInterval        int    `json:"receive-interval"`
-	TransmitInterval       int    `json:"transmit-interval"`
-	EchoInterval           int    `json:"echo-interval"`
-	RemoteReceiveInterval  int    `json:"remote-receive-interval"`
-	RemoteTransmitInterval int    `json:"remote-transmit-interval"`
-	RemoteEchoInterval     int    `json:"remote-echo-interval"`
+	Multihop               bool    `json:"multihop"`
+	Peer                   string  `json:"peer"`
+	Local                  string  `json:"local"`
+	Vrf                    string  `json:"vrf"`
+	ID                     uint32  `json:"id"`
+	RemoteID               uint32  `json:"remote-id"`
+	Status                 string  `json:"status"`
+	Uptime                 float64 `json:"uptime"`
+	Diagnostic             string  `json:"diagnostic"`
+	RemoteDiagnostic       string  `json:"remote-diagnostic"`
+	ReceiveInterval        uint32  `json:"receive-interval"`
+	TransmitInterval       uint32  `json:"transmit-interval"`
+	EchoInterval           uint32  `json:"echo-interval"`
+	RemoteReceiveInterval  uint32  `json:"remote-receive-interval"`
+	RemoteTransmitInterval uint32  `json:"remote-transmit-interval"`
+	RemoteEchoInterval     uint32  `json:"remote-echo-interval"`
 }

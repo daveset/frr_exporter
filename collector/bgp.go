@@ -188,7 +188,7 @@ func processBGPSummary(ch chan<- prometheus.Metric, jsonBGPSum []byte, AFI strin
 	wgAdvertisedPrefixes := &sync.WaitGroup{}
 	for vrfName, vrfData := range jsonMap {
 		// The labels are "vrf", "afi",  "safi", "local_as"
-		localAs := strconv.FormatInt(vrfData.AS, 10)
+		localAs := strconv.FormatUint(uint64(vrfData.AS), 10)
 		procLabels := []string{strings.ToLower(vrfName), strings.ToLower(AFI), strings.ToLower(SAFI), localAs}
 		// No point collecting metrics if no peers configured.
 		if vrfData.PeerCount != 0 {
@@ -201,7 +201,7 @@ func processBGPSummary(ch chan<- prometheus.Metric, jsonBGPSum []byte, AFI strin
 
 			for peerIP, peerData := range vrfData.Peers {
 				// The labels are "vrf", "afi", "safi", "local_as", "peer", "remote_as"
-				peerLabels := []string{strings.ToLower(vrfName), strings.ToLower(AFI), strings.ToLower(SAFI), localAs, peerIP, strconv.FormatInt(peerData.RemoteAs, 10)}
+				peerLabels := []string{strings.ToLower(vrfName), strings.ToLower(AFI), strings.ToLower(SAFI), localAs, peerIP, strconv.FormatUint(uint64(peerData.RemoteAs), 10)}
 
 				if *bgpPeerDescs {
 					d := ""
@@ -300,7 +300,7 @@ func getPeerAdvertisedPrefixes(ch chan<- prometheus.Metric, wg *sync.WaitGroup, 
 
 type bgpProcess struct {
 	RouterID        string
-	AS              int64
+	AS              uint32
 	RIBCount        float64
 	RIBMemory       float64
 	PeerCount       float64
@@ -312,7 +312,7 @@ type bgpProcess struct {
 
 type bgpPeerSession struct {
 	State               string
-	RemoteAs            int64
+	RemoteAs            uint32
 	MsgRcvd             float64
 	MsgSent             float64
 	PeerUptimeMsec      float64
