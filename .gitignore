@@ -23,6 +23,8 @@
 /vendor/
 /Godeps/
 
-frr_exporter
-
 # End of https://www.gitignore.io/api/go
+
+frr_exporter
+promu
+promu-*/
